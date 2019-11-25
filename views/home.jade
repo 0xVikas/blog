@@ -1,6 +1,11 @@
 extends layout
 
 block content
+  .topnav
+    a(style="color:gray;") SMAFT
+    a.active(href='/') Home
+    a(href='/logout' style="float:right;") Logout
+
   h1 PhoenixHub
   if msg
     p(style="color:red;") #{msg}
@@ -23,7 +28,7 @@ block content
     br
     each entry in blogposts
         div.box3
-            p Posted by : #{entry.user}, #{entry.time}
+            p(style="font-weight:bold;") Posted by : #{entry.user}, #{entry.time}
             p #{entry.content}
             br
             p Upvotes: #{entry.upvoters.length}, Downvotes: #{entry.downvoters.length}
