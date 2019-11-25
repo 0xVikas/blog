@@ -1,0 +1,38 @@
+extends layout
+
+block content
+  h1 PhoenixHub
+  if msg
+    p(style="color:red;") #{msg}
+  .box2
+    h3 Hello, #{user} ! Post something !
+    form(action="/newpost", method="post")
+      textarea(style="background:#EEEEEE;border:0.5px solid gray;height:150px;width:600px;" placeholder="Enter some text . . ." name="content")
+      br
+      input.btn3(type="submit" value="post")
+    a(href="/logout" style="float:right;padding-right:10px;display:inline;") Logout
+    br
+    br
+    <hr>
+    h3 Recent posts :
+    each entry in blogposts
+        div.box3
+            p Posted by : #{entry.user}, #{entry.time}
+            p #{entry.content}
+            br
+            p Upvotes: #{entry.upvoters.length}, Downvotes: #{entry.downvoters.length}
+            input(type="text" placeholder="Comment..." style="float:left;width:300px;")
+            form(action="/downvote", method="post")
+                input(type="hidden" name="blogid" value="#{entry.blogid}")
+                button(style='color:black;border-width:1px;float:right;' type="submit")
+                    i(id="#{index}c").fas.fa-caret-down
+                    | &nbsp;
+            form(action="/upvote", method="post")
+                input(type="hidden" name="blogid" value="#{entry.blogid}")
+                button(style='color:black;border-width:1px;float:right;' type="submit")
+                    i(id="#{index}c").fas.fa-caret-up
+        a(href="") Show all comments
+        br
+        br
+        br
+    

@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  h1 PhoenixHub
+  p Welcome to #{title}
+  if msg
+    p(style="color:red;") #{msg}
+  form(action="/" method="post")
+    .box 
+      h3 Please Login
+      input.email(type="text" name="email" placeholder="Email")
+      br
+      input.email(type="password" name="pass" class="email" placeholder="Password")
+      br
+      input.btn(type="submit" value="Login")
+      input.btn(type="button" value="Register")
