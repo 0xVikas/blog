@@ -20,11 +20,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.use('/users', usersRouter);
 
 function compare( a, b ) {
-  if ( a.downvoters.length < b.downvoters.length ){
-    return -1;
-  }
-  if ( a.downvoters.length > b.downvoters.length ){
+  if ( a.upvoters.length < b.upvoters.length ){
     return 1;
+  }
+  if ( a.upvoters.length > b.upvoters.length ){
+    return -1;
   }
   return 0;
 }
@@ -35,6 +35,8 @@ let users = {"user1":"pass1", "user2":"pass2", "user3":"pass3", "user4":"pass4"}
 
 let blogposts = [];
 let num_of_blogs = 0;
+
+let blogposts_dict = {};
 
 app.get('/', function(req, res, next) {
   if(!login_stat){
@@ -50,6 +52,7 @@ app.post('/newpost', function(req,res,next){
   var datetime = new Date();
   let time_now = datetime.toISOString().slice(0,10)
   npost = {user: curr_user, content: req.body.content, time: time_now, upvoters: [], downvoters: [], blogid: num_of_blogs};
+  blogposts_dict[num_of_blogs] = npost;
   blogposts.push(npost);
   blogposts.sort(compare);
   res.render('home', {user: curr_user, blogposts: blogposts});
@@ -67,6 +70,7 @@ app.post('/', function(req,res,next){
   if(users[req.body.email] == req.body.pass){
     login_stat = true;
     curr_user = req.body.email;
+    blogposts.sort(compare);
     res.render('home', {user: curr_user, blogposts: blogposts});
   }
   else{
@@ -90,26 +94,29 @@ app.post('/search', function(req,res,next){
 });
 
 app.post('/upvote', function(req,res,next){
-
-  if(blogposts[req.body.blogid].downvoters.includes(curr_user)){
-    let x_index = blogposts[req.body.blogid].downvoters.indexOf(curr_user);
-    blogposts[req.body.blogid].downvoters.splice(x_index, 1);
+  mindex = blogposts.indexOf(blogposts_dict[req.body.blogid]);
+  if(blogposts[mindex].downvoters.includes(curr_user)){
+    let x_index = blogposts[mindex].downvoters.indexOf(curr_user);
+    blogposts[mindex].downvoters.splice(x_index, 1);
   }
 
-  if(!blogposts[req.body.blogid].upvoters.includes(curr_user)){
-    blogposts[req.body.blogid].upvoters.push(curr_user);
+  if(!blogposts[mindex].upvoters.includes(curr_user)){
+    blogposts[mindex].upvoters.push(curr_user);
     }
+    blogposts.sort(compare);
   res.render('home', {user: curr_user, blogposts: blogposts});
 });
 
 app.post('/downvote', function(req,res,next){
-  if(blogposts[req.body.blogid].upvoters.includes(curr_user)){
-    let x_index = blogposts[req.body.blogid].upvoters.indexOf(curr_user);
-    blogposts[req.body.blogid].upvoters.splice(x_index, 1);
+  mindex = blogposts.indexOf(blogposts_dict[req.body.blogid]);
+  if(blogposts[mindex].upvoters.includes(curr_user)){
+    let x_index = blogposts[mindex].upvoters.indexOf(curr_user);
+    blogposts[mindex].upvoters.splice(x_index, 1);
   }
-  if(!blogposts[req.body.blogid].downvoters.includes(curr_user)){
-  blogposts[req.body.blogid].downvoters.push(curr_user);
+  if(!blogposts[mindex].downvoters.includes(curr_user)){
+  blogposts[mindex].downvoters.push(curr_user);
   }
+  blogposts.sort(compare);
   res.render('home', {user: curr_user, blogposts: blogposts});
 });
 
