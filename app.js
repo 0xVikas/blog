@@ -19,6 +19,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.use('/', indexRouter);
 //app.use('/users', usersRouter);
 
+function compare( a, b ) {
+  if ( a.downvoters.length < b.downvoters.length ){
+    return -1;
+  }
+  if ( a.downvoters.length > b.downvoters.length ){
+    return 1;
+  }
+  return 0;
+}
+
 let login_stat = false;
 
 let users = {"user1":"pass1", "user2":"pass2", "user3":"pass3", "user4":"pass4"};
@@ -41,6 +51,7 @@ app.post('/newpost', function(req,res,next){
   let time_now = datetime.toISOString().slice(0,10)
   npost = {user: curr_user, content: req.body.content, time: time_now, upvoters: [], downvoters: [], blogid: num_of_blogs};
   blogposts.push(npost);
+  blogposts.sort(compare);
   res.render('home', {user: curr_user, blogposts: blogposts});
   num_of_blogs += 1;
   console.log(blogposts);
@@ -60,6 +71,21 @@ app.post('/', function(req,res,next){
   }
   else{
     res.render('index', {title: 'PhoenixHub', msg: 'Wrong Username/Password'});
+  }
+});
+
+app.post('/search', function(req,res,next){
+  if(login_stat){
+    filtered_blogposts = [];
+    for(let i=0;i<blogposts.length;i++){
+      if(blogposts[i].user == req.body.s_user){
+        filtered_blogposts.push(blogposts[i]);
+      }
+    }
+    res.render('home', {user: curr_user, blogposts: filtered_blogposts});
+  }
+  else{
+    res.render('index', {title: 'PhoenixHub', msg: 'Please Login first!'})
   }
 });
 

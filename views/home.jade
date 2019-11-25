@@ -10,11 +10,17 @@ block content
       textarea(style="background:#EEEEEE;border:0.5px solid gray;height:150px;width:600px;" placeholder="Enter some text . . ." name="content")
       br
       input.btn3(type="submit" value="post")
+    a(href="/" style="float:right;padding-right:10px;display:inline;") Home
     a(href="/logout" style="float:right;padding-right:10px;display:inline;") Logout
     br
     br
     <hr>
     h3 Recent posts :
+    form(action="/search", method="post")
+        input(type="text" name="s_user" style="width:300px;background:rgb(250,250,250);" placeholder="Search for any user...")
+        input(type="submit" style="display:none;")
+    br
+    br
     each entry in blogposts
         div.box3
             p Posted by : #{entry.user}, #{entry.time}
